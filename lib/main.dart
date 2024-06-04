@@ -21,8 +21,8 @@ class MyApp extends StatelessWidget {
         title: 'Blackjack',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: Color.fromARGB(255, 255, 34, 34)),
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 34, 34)),
         ),
         home: MyHomePage(),
       ),
@@ -73,12 +73,13 @@ class MyAppState extends ChangeNotifier {
         gameStatus = 6;
         justDealt = false;
       }
-      if (stack >= bet){
+      if (stack >= bet) {
         //stack -= bet;
         //bet = (bet*2.0);
 
         doubleOption = true;
-        if (user._cards.elementAt(0).getValue() == user._cards.elementAt(1).getValue()){
+        if (user._cards.elementAt(0).getValue() ==
+            user._cards.elementAt(1).getValue()) {
           splitOption = true;
         }
       }
@@ -89,13 +90,13 @@ class MyAppState extends ChangeNotifier {
     }
   }
 
-  void doubleBet(){
+  void doubleBet() {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
       doubleTaken = true;
       stack -= bet;
-      bet = bet*2.0;
+      bet = bet * 2.0;
 
       user.addCard(deck.getCard());
       if (user.getSum() == 21) {
@@ -106,40 +107,38 @@ class MyAppState extends ChangeNotifier {
         gameEnded = true;
         justDealt = false;
         gameStatus = 3;
-      } else{
+      } else {
         stand();
       }
     }
     notifyListeners();
   }
 
-  void split(){
+  void split() {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
-      
+
       stack -= bet;
       //bet = bet*2.0;
       splitInProg = true;
       splitHand = true;
       gameStatus = 8;
-      
+
       Card1 temp = user.pullCard();
       userSplit.addCard(temp);
       userSplit.addCard(deck.getCard());
-
 
       if (userSplit.getSum() == 21) {
         gameStatus2 = 1;
         //justDealt = false;
         gameEnded = true;
-      } 
-      
+      }
     }
     notifyListeners();
   }
 
-  void switchHands(){
+  void switchHands() {
     splitHand = false;
     gameEnded = false;
     user.addCard(deck.getCard());
@@ -160,7 +159,7 @@ class MyAppState extends ChangeNotifier {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
-      if (splitHand){ 
+      if (splitHand) {
         userSplit.addCard(deck.getCard());
         if (userSplit.getSum() == 21) {
           gameStatus2 = 1;
@@ -174,7 +173,6 @@ class MyAppState extends ChangeNotifier {
           gameStatus2 = 3;
         }
       } else {
-        
         user.addCard(deck.getCard());
         if (user.getSum() == 21) {
           gameStatus = 1;
@@ -186,7 +184,6 @@ class MyAppState extends ChangeNotifier {
           gameStatus = 3;
         }
       }
-      
     }
     notifyListeners();
   }
@@ -195,7 +192,8 @@ class MyAppState extends ChangeNotifier {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
-      if (!splitHand && !splitInProg) { //normal hand
+      if (!splitHand && !splitInProg) {
+        //normal hand
         while (dealer.getSum() <= 16) {
           dealer.addCard(deck.getCard());
         }
@@ -212,7 +210,8 @@ class MyAppState extends ChangeNotifier {
         }
         gameEnded = true;
         justDealt = false;
-      } else if (!splitHand && splitInProg){ //second hand of split (normal hand)
+      } else if (!splitHand && splitInProg) {
+        //second hand of split (normal hand)
         while (dealer.getSum() <= 16) {
           dealer.addCard(deck.getCard());
         }
@@ -246,14 +245,14 @@ class MyAppState extends ChangeNotifier {
         splitInProg = false;
         gameEnded = true;
         justDealt = false;
-      } else if (splitHand && splitInProg){
+      } else if (splitHand && splitInProg) {
         switchHands();
       }
     }
     notifyListeners();
   }
 
-  void adjustBet(double value){
+  void adjustBet(double value) {
     bet = value;
     //_PlayerDocState.
     notifyListeners();
@@ -268,37 +267,37 @@ class MyAppState extends ChangeNotifier {
     for (var i in userSplit._cards) {
       print("${i.getId()} ${i.getSuit()} ${i.getValue()}");
     }
-    if (gameStatus == 1 || gameStatus == 4){
-      stack += (bet*2.0);
-    } else if (gameStatus == 5){
-      stack += (bet*2.5);
-    } else if (gameStatus == 7){
+    if (gameStatus == 1 || gameStatus == 4) {
+      stack += (bet * 2.0);
+    } else if (gameStatus == 5) {
+      stack += (bet * 2.5);
+    } else if (gameStatus == 7) {
       stack += bet;
     }
-    if (gameStatus2 == 1 || gameStatus2 == 4){
-      stack += (bet*2.0);
-    } else if (gameStatus2 == 5){
-      stack += (bet*2.5);
-    } else if (gameStatus2 == 7){
+    if (gameStatus2 == 1 || gameStatus2 == 4) {
+      stack += (bet * 2.0);
+    } else if (gameStatus2 == 5) {
+      stack += (bet * 2.5);
+    } else if (gameStatus2 == 7) {
       stack += bet;
     }
-    if (doubleTaken){
-      bet = bet/2.0;
+    if (doubleTaken) {
+      bet = bet / 2.0;
     }
     doubleOption = false;
     doubleTaken = false;
     splitOption = false;
     gameStatus = 0;
     gameStatus2 = 0;
-    if (stack == 0.0){
+    if (stack == 0.0) {
       gameStatus = 10;
-    } else if (stack < bet){
+    } else if (stack < bet) {
       bet = stack;
       gameStarted = false;
     } else {
       gameStarted = false;
     }
-    
+
     user.clearHand();
     dealer.clearHand();
     userSplit.clearHand();
@@ -308,11 +307,9 @@ class MyAppState extends ChangeNotifier {
     splitHand = false;
     splitInProg = false;
     splitResult = false;
-      
-    
+
     notifyListeners();
   }
-  
 }
 
 // ...
@@ -391,16 +388,18 @@ class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //var appState = context.watch<MyAppState>();
-    
 
     return Scaffold(
       body: Center(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Container(
             height: 400.0,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              DealerDoc(),
-            ],),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DealerDoc(),
+              ],
+            ),
           ),
           //DealerDoc(),
           //SizedBox(height: 125),
@@ -413,18 +412,15 @@ class GeneratorPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           SizedBox(height: 10),
           Baseline(
             baseline: 10,
             baselineType: TextBaseline.ideographic,
             child: PlayerDoc(),
           ),
-          
         ]),
       ),
-      
-
     );
   }
 }
@@ -444,7 +440,6 @@ class ProfilePage extends StatelessWidget {
         child: Text('No profile yet.'),
       );
     }
-
   }
 }
 /*
@@ -481,7 +476,8 @@ class InfoPage extends StatelessWidget {
           children: [
             Text(
               'Blackjack Rules',
-              style: TextStyle( // Style the heading
+              style: TextStyle(
+                // Style the heading
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -492,10 +488,11 @@ class InfoPage extends StatelessWidget {
               Blackjack is a classic card game where the goal is to beat the dealer by getting a hand closer to 21 without going over. 
               Face cards are worth 10, aces can be 1 or 11, and other cards are worth their pip value. 
               You can hit (get another card), stand (stop receiving cards), double down (bet double for one more card) to reach 21, or split (if your cards have the same value). Double and split actions are only available after the hand is dealt, and unavailable after any subsequent actions.
+              This game is played with 6 Decks of cards.
               Try your luck!''',
-              style: TextStyle( // Style the paragraph text
+              style: TextStyle(
+                // Style the paragraph text
                 fontSize: 16.0,
-                
               ),
               textAlign: TextAlign.left,
             ),
@@ -519,7 +516,6 @@ class PlayerDoc extends StatefulWidget {
 class _PlayerDocState extends State<PlayerDoc> {
   //final WordPair pair;
   //double _currentSliderValue = 0.0;
-  
 
   @override
   Widget build(BuildContext context) {
@@ -528,6 +524,7 @@ class _PlayerDocState extends State<PlayerDoc> {
     final theme = Theme.of(context);
     String currStack = appState.stack.toStringAsFixed(2);
     String currBet = appState.bet.toStringAsFixed(2);
+    //String x = "KH";
     final style = theme.textTheme.displayMedium!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
@@ -542,47 +539,84 @@ class _PlayerDocState extends State<PlayerDoc> {
         //ListView(
         //children: appState.user._cards,
         //)
-        
-        //if (appState.splitInProg) 
-        if (!appState.splitHand) for (var card in appState.user._cards.reversed) 
-          Card(
-            elevation: 1.0,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("${card.getId()} of ${card.getSuit()}",
-                  style: TextStyle(fontSize: 10.0)),
-            ),
+        /*
+        Card(
+          
+          child: Image.asset('images/$x.png', height: 60.0, width: 30.0),
+        ),
+        */
+        /*
+        Container(
+          width: 60.0,
+          child: Stack(
+            children: [
+              Image.asset('images/$x.png', height: 90.0, width: 45.0),
+              Positioned(
+                top:
+                    -10.0, // Adjust for desired vertical offset (negative for above)
+                right:
+                    -8.0, // Adjust for desired horizontal offset (negative for right)
+                child: Image.asset('images/$x.png', height: 90.0, width: 45.0),
+              )
+            ],
+            //Image.asset('images/$x.png', height: 90.0, width: 45.0),
+            //Image.asset('images/$x.png', height: 90.0, width: 45.0),
           ),
-        if (appState.splitHand) for (var card in appState.userSplit._cards.reversed) 
-          Card(
-            elevation: 1.0,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("${card.getId()} of ${card.getSuit()}",
-                  style: TextStyle(fontSize: 10.0)),
+        ),
+        */
+        //Image.asset('images/$x.png', height: 90.0, width: 45.0),
+        //if (appState.splitInProg)
+
+        if (!appState.splitHand) PlayerHand(),
+        /*
+        if (!appState.splitHand)
+          for (var card in appState.user._cards.reversed)
+            
+            Card(
+              elevation: 1.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("${card.getId()} of ${card.getSuit()}",
+                    style: TextStyle(fontSize: 10.0)),
+              ),
             ),
-          ),
-        SizedBox(height: 10),
+        */
+        if (appState.splitHand) PlayerHandSplit(),
+        /*
+          for (var card in appState.userSplit._cards.reversed)
+            Card(
+              elevation: 1.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("${card.getId()} of ${card.getSuit()}",
+                    style: TextStyle(fontSize: 10.0)),
+              ),
+            ),
+        */
+        //SizedBox(height: 1),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (appState.doubleOption) ElevatedButton(
-              onPressed: () {
-                appState.doubleBet();
-              },
-              //icon: Icon(icon),
-              
-              style: ElevatedButton.styleFrom(fixedSize: Size(60,40), padding: EdgeInsets.all(5.0)),
-              child: Text('Double', style: TextStyle(fontSize: 11.5)),
-            ),
+            if (appState.doubleOption)
+              ElevatedButton(
+                onPressed: () {
+                  appState.doubleBet();
+                },
+                //icon: Icon(icon),
+
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(60, 40), padding: EdgeInsets.all(5.0)),
+                child: Text('Double', style: TextStyle(fontSize: 11.5)),
+              ),
             if (appState.doubleOption) SizedBox(width: 10),
             ElevatedButton(
               onPressed: () {
                 appState.hit();
               },
               //icon: Icon(icon),
-              style: ElevatedButton.styleFrom(fixedSize: Size(65,45), padding: EdgeInsets.all(5.0)),
+              style: ElevatedButton.styleFrom(
+                  fixedSize: Size(65, 45), padding: EdgeInsets.all(5.0)),
               child: Text('Hit'),
             ),
             SizedBox(width: 10),
@@ -590,19 +624,22 @@ class _PlayerDocState extends State<PlayerDoc> {
               onPressed: () {
                 appState.stand();
               },
-              style: ElevatedButton.styleFrom(fixedSize: Size(65,45), padding: EdgeInsets.all(5.0)),
+              style: ElevatedButton.styleFrom(
+                  fixedSize: Size(65, 45), padding: EdgeInsets.all(5.0)),
               child: Text('Stand'),
             ),
             if (appState.splitOption) SizedBox(width: 10),
-            if (appState.splitOption) ElevatedButton(
-              onPressed: () {
-                appState.split();
-              },
-              //icon: Icon(icon),
-              
-              style: ElevatedButton.styleFrom(fixedSize: Size(35,35), padding: EdgeInsets.all(5.0)),
-              child: Text('Split', style: TextStyle(fontSize: 11.5)),
-            ),
+            if (appState.splitOption)
+              ElevatedButton(
+                onPressed: () {
+                  appState.split();
+                },
+                //icon: Icon(icon),
+
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(35, 35), padding: EdgeInsets.all(5.0)),
+                child: Text('Split', style: TextStyle(fontSize: 11.5)),
+              ),
           ],
         ),
         SizedBox(height: 10),
@@ -679,7 +716,7 @@ class _PlayerDocState extends State<PlayerDoc> {
           },
         ),*/
         if (!appState.gameStarted) CupertinoSliderExample(),
-        
+
         SizedBox(height: 60),
       ],
     );
@@ -701,18 +738,18 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    if (appState.stack >= appState.bet){
+    if (appState.stack >= appState.bet) {
       _currentSliderValue = appState.bet;
     } else {
       _currentSliderValue = appState.stack;
     }
-    
+
     //var playerState = context.watch<_PlayerDocState>();
     return CupertinoPageScaffold(
       //navigationBar: const CupertinoNavigationBar(
-        //middle: Text('CupertinoSlider Sample'),
+      //middle: Text('CupertinoSlider Sample'),
       //),
-      
+
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -741,7 +778,6 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
               onChangeEnd: (double value) {
                 setState(() {
                   _sliderStatus = 'Finished sliding';
-                  
                 });
               },
               // This is called when slider value is changed.
@@ -768,6 +804,190 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
   }
 }
 
+class PlayerHand extends StatelessWidget {
+  const PlayerHand({
+    super.key,
+    //required this.pair,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    //int i = 1;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    //int temp = appState.dealer.getSum();
+    return Container(
+      height: 180.0,
+      width: 180.0,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          if (appState.user._cards.isNotEmpty)
+            Image.asset(
+                'images/${appState.user._cards.elementAt(0).getId()}${appState.user._cards.elementAt(0).getSuit()}.png',
+                height: 90.0,
+                width: 45.0),
+          for (var card in appState.user._cards.skip(1))
+            Positioned(
+              top: -15.0 * (appState.user._cards.indexOf(card) - 5),
+              right: -10.0 * (appState.user._cards.indexOf(card) - 7),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Image.asset(
+                'images/${card.getId()}${card.getSuit()}.png',
+                height: 90.0,
+                width: 45.0,
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class PlayerHandSplit extends StatelessWidget {
+  const PlayerHandSplit({
+    super.key,
+    //required this.pair,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    //int i = 1;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    //int temp = appState.dealer.getSum();
+    return Container(
+      height: 180.0,
+      width: 180.0,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          if (appState.userSplit._cards.isNotEmpty)
+            Image.asset(
+                'images/${appState.userSplit._cards.elementAt(0).getId()}${appState.userSplit._cards.elementAt(0).getSuit()}.png',
+                height: 90.0,
+                width: 45.0),
+          for (var card in appState.userSplit._cards.skip(1))
+            Positioned(
+              top: -15.0 * (appState.userSplit._cards.indexOf(card) - 5),
+              right: -10.0 * (appState.userSplit._cards.indexOf(card) - 7),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Image.asset(
+                'images/${card.getId()}${card.getSuit()}.png',
+                height: 90.0,
+                width: 45.0,
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class DealerHandOne extends StatelessWidget {
+  const DealerHandOne({
+    super.key,
+    //required this.pair,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    //int i = 1;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    //int temp = appState.dealer.getSum();
+    return Container(
+      height: 180.0,
+      width: 180.0,
+      child: Stack(
+        alignment: AlignmentDirectional.topCenter,
+        children: [
+          if (appState.dealer._cards.isNotEmpty)
+            Image.asset('images/back.png', height: 90.0, width: 45.0),
+          for (var card in appState.dealer._cards.skip(1))
+            Positioned(
+              top: -15.0 * (appState.dealer._cards.indexOf(card) - 3),
+              right: -9.0 * (appState.dealer._cards.indexOf(card) - 7),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Image.asset(
+                'images/${card.getId()}${card.getSuit()}.png',
+                height: 90.0,
+                width: 45.0,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class DealerHandTwo extends StatelessWidget {
+  const DealerHandTwo({
+    super.key,
+    //required this.pair,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    //int i = 1;
+    final theme = Theme.of(context);
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
+    //int temp = appState.dealer.getSum();
+    return Container(
+      height: 180.0,
+      width: 180.0,
+      child: Stack(
+        alignment: AlignmentDirectional.topCenter,
+        children: [
+          if (appState.dealer._cards.isNotEmpty)
+            Image.asset(
+                'images/${appState.dealer._cards.elementAt(0).getId()}${appState.dealer._cards.elementAt(0).getSuit()}.png',
+                height: 90.0,
+                width: 45.0),
+          for (var card in appState.dealer._cards.skip(1))
+            Positioned(
+              top: 15.0 * (appState.dealer._cards.indexOf(card) + 1),
+              right: -9.0 * (appState.dealer._cards.indexOf(card) - 7),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Image.asset(
+                'images/${card.getId()}${card.getSuit()}.png',
+                height: 90.0,
+                width: 45.0,
+                alignment: Alignment.topCenter,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
 
 class DealerDoc extends StatelessWidget {
   const DealerDoc({
@@ -785,7 +1005,7 @@ class DealerDoc extends StatelessWidget {
       color: theme.colorScheme.onPrimary,
     );
     //int temp = appState.dealer.getSum();
-    if (appState.justDealt && appState.gameStarted && !appState.gameEnded){
+    if (appState.justDealt && appState.gameStarted && !appState.gameEnded) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -799,24 +1019,26 @@ class DealerDoc extends StatelessWidget {
               child: Text("Dealer"),
             ),
           ),
+          DealerHandOne(),
+          /*
           SizedBox(height: 20),
           Card(
             elevation: 1.0,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("?",
-                  style: TextStyle(fontSize: 10.0)),
+              child: Text("?", style: TextStyle(fontSize: 10.0)),
             ),
           ),
           Card(
             elevation: 1.0,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("${appState.dealer._cards.elementAt(1).getId()} of ${appState.dealer._cards.elementAt(1).getSuit()}",
+              child: Text(
+                  "${appState.dealer._cards.elementAt(1).getId()} of ${appState.dealer._cards.elementAt(1).getSuit()}",
                   style: TextStyle(fontSize: 10.0)),
             ),
           ),
-          
+          */
           SizedBox(height: 10),
         ],
       );
@@ -834,7 +1056,9 @@ class DealerDoc extends StatelessWidget {
               child: Text("Dealer"),
             ),
           ),
-          SizedBox(height: 20),
+          //SizedBox(height: 20),
+          DealerHandTwo(),
+          /*
           for (var card in appState.dealer._cards)
             Card(
               elevation: 1.0,
@@ -844,7 +1068,7 @@ class DealerDoc extends StatelessWidget {
                     style: TextStyle(fontSize: 10.0)),
               ),
             ),
-
+          */
           SizedBox(height: 10),
         ],
       );
@@ -910,17 +1134,16 @@ class ContBut extends StatelessWidget {
     final style = theme.textTheme.displayMedium!.copyWith(
       color: theme.colorScheme.onPrimary,
     );
-    
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ElevatedButton(
           onPressed: () {
-            if (appState.splitHand){
+            if (appState.splitHand) {
               //appState.endGame();
               appState.switchHands();
-            } else if (appState.splitInProg){
+            } else if (appState.splitInProg) {
               //appState.endGame();
               //appState.splitResult = true;
               //appState.gameEnded = true;
@@ -1023,23 +1246,26 @@ class Gamestatus extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (!appState.splitResult) Card(
-            //child: Flexible(
+          if (!appState.splitResult)
+            Card(
+              //child: Flexible(
               child: Text(result),
-            //),
-            //child: Text(result),
-          ),
-          if (appState.splitResult) Card(
-            //child: Flexible(
+              //),
+              //child: Text(result),
+            ),
+          if (appState.splitResult)
+            Card(
+              //child: Flexible(
               child: Text("Hand 2: ${result}"),
-            //),
-          ),
+              //),
+            ),
           if (appState.splitResult) SizedBox(width: 5.0),
-          if (appState.splitResult) Card(
-            //child: Flexible(
+          if (appState.splitResult)
+            Card(
+              //child: Flexible(
               child: Text("Hand 1: ${result2}"),
-            //),
-          ),
+              //),
+            ),
         ],
       ),
     );
@@ -1082,15 +1308,15 @@ class Player {
   void addCard(Card1 card) {
     this._cards.add(card);
     this.handSum += card.getValue();
-    if (card.getValue() == 11){
+    if (card.getValue() == 11) {
       this.hasAce += 1;
     }
   }
 
   int getSum() {
-    if (this.handSum > 21){
-      if (this.hasAce > 0){
-        return (this.handSum - (10*this.hasAce));
+    if (this.handSum > 21) {
+      if (this.hasAce > 0) {
+        return (this.handSum - (10 * this.hasAce));
       }
     }
     return this.handSum;
@@ -1126,7 +1352,7 @@ class Deck {
 
     int value = 0;
     int s = 1;
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= 24; i++) {
       for (int j = 1; j <= 13; j++) {
         if (j <= 9) {
           value = j + 1;
@@ -1135,7 +1361,7 @@ class Deck {
         } else if (j == 13) {
           value = 11;
         }
-        cards.add(Card1(s, suits[i - 1], ids[j - 1], value));
+        cards.add(Card1(s, suits[(i - 1)%4], ids[j - 1], value));
         s++;
       }
     }
@@ -1158,7 +1384,7 @@ class Deck {
 }
 
 // Enums for suits and ids (optional, but recommended for Flutter)
-const List<String> suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
+const List<String> suits = ["H", "D", "C", "S"];
 const List<String> ids = [
   "2",
   "3",
@@ -1168,9 +1394,9 @@ const List<String> ids = [
   "7",
   "8",
   "9",
-  "10",
-  "Jack",
-  "Queen",
-  "King",
-  "Ace"
+  "0",
+  "J",
+  "Q",
+  "K",
+  "A"
 ];
