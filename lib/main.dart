@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:collection/collection.dart';
+import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -22,7 +25,10 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme:
-              ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 34, 34)),
+              //ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 34, 34)),
+              ColorScheme.highContrastDark(
+                  primary: Color.fromARGB(255, 34, 255, 178),
+                  secondary: Color.fromARGB(255, 89, 219, 228)),
         ),
         home: MyHomePage(),
       ),
@@ -54,16 +60,25 @@ class MyAppState extends ChangeNotifier {
   bool splitInProg = false;
   bool splitResult = false;
 
-  void deal() {
+  Future<void> deal() async {
     if (!gameStarted) {
+      gameStarted = true;
+      justDealt = true;
       print("Dealt");
       //bet = _CupertinoSliderExampleState()._currentSliderValue;
       print("${bet}");
       stack -= bet;
       user.addCard(deck.getCard());
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
       dealer.addCard(deck.getCard());
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
       user.addCard(deck.getCard());
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
       dealer.addCard(deck.getCard());
+
       if (user.getSum() == 21) {
         gameStatus = 5;
         gameEnded = true;
@@ -86,6 +101,7 @@ class MyAppState extends ChangeNotifier {
       //gameEnded = false;
       gameStarted = true;
       justDealt = true;
+
       notifyListeners();
     }
   }
@@ -128,12 +144,13 @@ class MyAppState extends ChangeNotifier {
       Card1 temp = user.pullCard();
       userSplit.addCard(temp);
       userSplit.addCard(deck.getCard());
-
+      /*
       if (userSplit.getSum() == 21) {
         gameStatus2 = 1;
         //justDealt = false;
         gameEnded = true;
       }
+      */
     }
     notifyListeners();
   }
@@ -156,46 +173,75 @@ class MyAppState extends ChangeNotifier {
   // Function for hitting (getting another card) - to be implemented later
   void hit() {
     // Implement logic for adding a card to the user's hand
-    if (gameStarted && !gameEnded) {
-      doubleOption = false;
-      splitOption = false;
-      if (splitHand) {
-        userSplit.addCard(deck.getCard());
-        if (userSplit.getSum() == 21) {
-          gameStatus2 = 1;
-          //switchHands();
-          justDealt = false;
-          gameEnded = true;
-        } else if (userSplit.getSum() > 21) {
-          gameEnded = true;
-          //switchHands();
-          justDealt = false;
-          gameStatus2 = 3;
-        }
-      } else {
-        user.addCard(deck.getCard());
-        if (user.getSum() == 21) {
-          gameStatus = 1;
-          justDealt = false;
-          gameEnded = true;
-        } else if (user.getSum() > 21) {
-          gameEnded = true;
-          justDealt = false;
-          gameStatus = 3;
+    if (gameStatus != 10) {
+      if (gameStarted && !gameEnded) {
+        doubleOption = false;
+        splitOption = false;
+        if (splitHand) {
+          userSplit.addCard(deck.getCard());
+          if (userSplit.getSum() == 21) {
+            stand();
+            /*
+            gameStatus2 = 1;
+            //switchHands();
+            justDealt = false;
+            gameEnded = true;
+            */
+          } else if (userSplit.getSum() > 21) {
+            print("First split bust");
+            //gameEnded = true;
+            gameStatus2 = 3;
+            switchHands();
+            print("${gameStatus2}");
+            //justDealt = false;
+          }
+        } else {
+          user.addCard(deck.getCard());
+          if (user.getSum() == 21) {
+            /*
+            gameStatus = 1;
+            justDealt = false;
+            gameEnded = true;
+            */
+            stand();
+          } else if (user.getSum() > 21) {
+            if (splitInProg) {
+              splitResult = true;
+              splitInProg = false;
+              if (21 < userSplit.getSum()) {
+                gameStatus2 = 3;
+              } else if (dealer.getSum() > userSplit.getSum()) {
+                gameStatus2 = 2;
+              } else if (dealer.getSum() < userSplit.getSum()) {
+                gameStatus2 = 1;
+              } else if (dealer.getSum() == userSplit.getSum()) {
+                gameStatus2 = 7;
+              }
+            }
+
+            gameEnded = true;
+            justDealt = false;
+            gameStatus = 3;
+          }
         }
       }
     }
     notifyListeners();
   }
 
-  void stand() {
+  Future<void> stand() async {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
+      await Future.delayed(const Duration(milliseconds: 500));
       if (!splitHand && !splitInProg) {
         //normal hand
+        gameEnded = true;
+        justDealt = false;
         while (dealer.getSum() <= 16) {
+          await Future.delayed(const Duration(milliseconds: 500));
           dealer.addCard(deck.getCard());
+          notifyListeners();
         }
         if (dealer.getSum() == 21) {
           gameStatus = 2;
@@ -217,7 +263,9 @@ class MyAppState extends ChangeNotifier {
         }
         if (dealer.getSum() == 21) {
           gameStatus = 2;
-          gameStatus2 = 2;
+          if (userSplit.getSum() <= 21) {
+            gameStatus2 = 2;
+          }
         } else if (dealer.getSum() > 21) {
           gameStatus = 4;
           gameStatus2 = 4;
@@ -234,6 +282,8 @@ class MyAppState extends ChangeNotifier {
         } else if (dealer.getSum() > 21) {
           gameStatus = 4;
           gameStatus2 = 4;
+        } else if (21 < userSplit.getSum()) {
+          gameStatus2 = 3;
         } else if (dealer.getSum() > userSplit.getSum()) {
           gameStatus2 = 2;
         } else if (dealer.getSum() < userSplit.getSum()) {
@@ -291,6 +341,8 @@ class MyAppState extends ChangeNotifier {
     gameStatus2 = 0;
     if (stack == 0.0) {
       gameStatus = 10;
+      //gameEnded = true;
+      //gameStarted = false;
     } else if (stack < bet) {
       bet = stack;
       gameStarted = false;
@@ -430,45 +482,55 @@ class GeneratorPage extends StatelessWidget {
 
 class ProfilePage extends StatelessWidget {
   @override
+  final TextStyle comingSoonStyle =
+      TextStyle(color: Color.fromARGB(255, 89, 228, 158));
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black, // Set background color
+      body: Center(
+        child: Column(
+          // Change to Column for vertical alignment
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Center content vertically
+          children: [
+            Icon(Icons.person,
+                size: 100.0,
+                color: Color.fromARGB(255, 77, 187, 132)), // Add icon
+            Text('Profile Feature Coming Soon.', style: comingSoonStyle),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /*
   Widget build(BuildContext context) {
     //var appState = context.watch<MyAppState>();
+    
+    
 
     var temp = true;
 
     if (temp) {
       return Center(
-        child: Text('No profile yet.'),
+        child: Text('Profile Feature Coming Soon.',style:  TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
+        
       );
     }
   }
+  */
 }
-/*
-class InfoPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
-    String infoText = """
-
-    """;
-
-    return Column(
-      children: [
-
-      ],
-    );
-    
-
-  }
-}
-*/
 
 class InfoPage extends StatelessWidget {
   @override
+
+  //final TextStyle comingSoonStyle = TextStyle(color: Color.fromARGB(255, 89, 228, 158));
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Info'), // Set app bar title
-      ),
+          //title: Text('Info'), // Set app bar title
+          ),
       body: Padding(
         padding: EdgeInsets.all(16.0), // Add some padding
         child: Column(
@@ -479,21 +541,27 @@ class InfoPage extends StatelessWidget {
               style: TextStyle(
                 // Style the heading
                 fontSize: 24.0,
+                color: Color.fromARGB(255, 89, 228, 158),
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 10.0), // Add some space between heading and text
             Text(
               '''
-              Blackjack is a classic card game where the goal is to beat the dealer by getting a hand closer to 21 without going over. 
-              Face cards are worth 10, aces can be 1 or 11, and other cards are worth their pip value. 
-              You can hit (get another card), stand (stop receiving cards), double down (bet double for one more card) to reach 21, or split (if your cards have the same value). Double and split actions are only available after the hand is dealt, and unavailable after any subsequent actions.
-              This game is played with 6 Decks of cards.
-              Try your luck!''',
+Blackjack is a classic card game where the goal is to beat the dealer by getting a hand closer to 21 without going over. 
+              
+Face cards are worth 10, aces can be 1 or 11, and other cards are worth their pip value. 
+              
+You can hit (get another card), stand (stop receiving cards), double down (bet double for one more card) to reach 21, or split (if your cards have the same value). Double and split actions are only available after the hand is dealt, and unavailable after any subsequent actions.
+              
+This game is played with 6 Decks of cards. The deck is reshuffled after three decks have been played.
+              
+      Try your luck!''',
               style: TextStyle(
-                // Style the paragraph text
-                fontSize: 16.0,
-              ),
+                  // Style the paragraph text
+                  fontSize: 16.0,
+                  color: Color.fromARGB(255, 89, 228, 158)),
+              softWrap: true,
               textAlign: TextAlign.left,
             ),
           ],
@@ -534,66 +602,8 @@ class _PlayerDocState extends State<PlayerDoc> {
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        //BigCard(pair: pair),
-
-        //ListView(
-        //children: appState.user._cards,
-        //)
-        /*
-        Card(
-          
-          child: Image.asset('images/$x.png', height: 60.0, width: 30.0),
-        ),
-        */
-        /*
-        Container(
-          width: 60.0,
-          child: Stack(
-            children: [
-              Image.asset('images/$x.png', height: 90.0, width: 45.0),
-              Positioned(
-                top:
-                    -10.0, // Adjust for desired vertical offset (negative for above)
-                right:
-                    -8.0, // Adjust for desired horizontal offset (negative for right)
-                child: Image.asset('images/$x.png', height: 90.0, width: 45.0),
-              )
-            ],
-            //Image.asset('images/$x.png', height: 90.0, width: 45.0),
-            //Image.asset('images/$x.png', height: 90.0, width: 45.0),
-          ),
-        ),
-        */
-        //Image.asset('images/$x.png', height: 90.0, width: 45.0),
-        //if (appState.splitInProg)
-
         if (!appState.splitHand) PlayerHand(),
-        /*
-        if (!appState.splitHand)
-          for (var card in appState.user._cards.reversed)
-            
-            Card(
-              elevation: 1.0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${card.getId()} of ${card.getSuit()}",
-                    style: TextStyle(fontSize: 10.0)),
-              ),
-            ),
-        */
         if (appState.splitHand) PlayerHandSplit(),
-        /*
-          for (var card in appState.userSplit._cards.reversed)
-            Card(
-              elevation: 1.0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${card.getId()} of ${card.getSuit()}",
-                    style: TextStyle(fontSize: 10.0)),
-              ),
-            ),
-        */
-        //SizedBox(height: 1),
         Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -681,42 +691,7 @@ class _PlayerDocState extends State<PlayerDoc> {
           ],
         ),
         SizedBox(height: 10),
-
-        /*
-        CupertinoSlider(
-          key: const Key('slider'),
-          value: _currentSliderValue,
-          // This allows the slider to jump between divisions.
-          // If null, the slide movement is continuous.
-          divisions: 20,
-          // The maximum slider value
-          max: appState.stack,
-          activeColor: const Color.fromARGB(255, 82, 222, 173),
-          thumbColor: Color.fromARGB(255, 82, 101, 222),
-          // This is called when sliding is started.
-          onChangeStart: (double value) {
-            //setState(() {
-            //_sliderStatus = 'Sliding';
-            //});
-            _currentSliderValue = value;
-          },
-          // This is called when sliding has ended.
-          onChangeEnd: (double value) {
-            //_sliderStatus = 'Finished sliding';
-            _currentSliderValue = value;
-            //value: value;
-            //notifyListeners();
-          },
-          // This is called when slider value is changed.
-          onChanged: (double value) {
-            _currentSliderValue = value;
-            if (!appState.gameStarted){
-              appState.bet = _currentSliderValue;
-            }
-          },
-        ),*/
         if (!appState.gameStarted) CupertinoSliderExample(),
-
         SizedBox(height: 60),
       ],
     );
@@ -766,8 +741,8 @@ class _CupertinoSliderExampleState extends State<CupertinoSliderExample> {
               // The maximum slider value
               max: appState.stack,
               min: 0.0,
-              activeColor: const Color.fromARGB(255, 222, 82, 82),
-              thumbColor: const Color.fromARGB(255, 222, 82, 82),
+              activeColor: Color.fromARGB(255, 82, 194, 222),
+              thumbColor: Color.fromARGB(255, 82, 222, 178),
               // This is called when sliding is started.
               onChangeStart: (double value) {
                 setState(() {
@@ -923,6 +898,7 @@ class DealerHandOne extends StatelessWidget {
           if (appState.dealer._cards.isNotEmpty)
             Image.asset('images/back.png', height: 90.0, width: 45.0),
           for (var card in appState.dealer._cards.skip(1))
+            //await Future.delayed(const Duration(seconds: 1));
             Positioned(
               top: -15.0 * (appState.dealer._cards.indexOf(card) - 3),
               right: -9.0 * (appState.dealer._cards.indexOf(card) - 7),
@@ -1243,28 +1219,50 @@ class Gamestatus extends StatelessWidget {
       result2 = "Error";
     }
     return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          if (!appState.splitResult)
+          if (!appState.splitResult && (status != 0))
             Card(
               //child: Flexible(
-              child: Text(result),
+
+              color: Color.fromARGB(255, 9, 21, 23),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                child: Text(result,
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 43, 203, 238),
+                    )),
+              ),
               //),
               //child: Text(result),
             ),
           if (appState.splitResult)
             Card(
-              //child: Flexible(
-              child: Text("Hand 2: ${result}"),
+
+
+              color: Color.fromARGB(255, 9, 21, 23),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                child: Text("Hand 2: ${result} (${appState.user.getSum()})",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 43, 203, 238),
+                    )),
+              ),
               //),
             ),
           if (appState.splitResult) SizedBox(width: 5.0),
           if (appState.splitResult)
             Card(
-              //child: Flexible(
-              child: Text("Hand 1: ${result2}"),
-              //),
+              
+              color: Color.fromARGB(255, 9, 21, 23),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                child: Text("Hand 1: ${result2} (${appState.userSplit.getSum()})",
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 43, 203, 238),
+                    )),
+              ),
             ),
         ],
       ),
@@ -1275,6 +1273,7 @@ class Gamestatus extends StatelessWidget {
   //MyAppState.user.addCard(MyAppState.deck.getCard());
   //}
 }
+
 
 class Card1 {
   final int num;
@@ -1361,7 +1360,7 @@ class Deck {
         } else if (j == 13) {
           value = 11;
         }
-        cards.add(Card1(s, suits[(i - 1)%4], ids[j - 1], value));
+        cards.add(Card1(s, suits[(i - 1) % 4], ids[j - 1], value));
         s++;
       }
     }
@@ -1369,7 +1368,7 @@ class Deck {
   }
 
   Card1 getCard() {
-    if (this.currentNum > 40) {
+    if (this.currentNum > 156) {
       _cards.shuffle();
       this.currentNum = 0;
     }
