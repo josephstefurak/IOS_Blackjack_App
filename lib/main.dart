@@ -8,7 +8,6 @@ import 'package:collection/collection.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -23,6 +22,17 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Blackjack',
         theme: ThemeData(
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              // Define your custom button style here
+              //foregroundColor: Colors.white,
+              backgroundColor: Color.fromARGB(16, 34, 255, 178),
+              elevation: 4.5,
+              //textStyle: TextStyle(fontSize: 18.0),
+              //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              // You can add other style properties like padding, shadows, etc.
+            ),
+          ),
           useMaterial3: true,
           colorScheme:
               //ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 255, 34, 34)),
@@ -59,6 +69,23 @@ class MyAppState extends ChangeNotifier {
   bool splitHand = false;
   bool splitInProg = false;
   bool splitResult = false;
+
+  /*
+  final audioPlayer = AudioPlayer();
+
+  @override
+  void dispose() {
+    super.dispose();
+    audioPlayer.dispose(); // Release resources when the widget is disposed
+  }
+
+  // ... rest of your widget code
+
+  void playSoundEffect() async {
+    //await audioPlayer.setSource(AssetSource('button_click.wav'));
+    await audioPlayer.play('sounds/deal.mp3');
+  }
+  */
 
   Future<void> deal() async {
     if (!gameStarted) {
@@ -178,7 +205,9 @@ class MyAppState extends ChangeNotifier {
         doubleOption = false;
         splitOption = false;
         if (splitHand) {
+          
           userSplit.addCard(deck.getCard());
+
           if (userSplit.getSum() == 21) {
             stand();
             /*
@@ -197,6 +226,7 @@ class MyAppState extends ChangeNotifier {
           }
         } else {
           user.addCard(deck.getCard());
+          //playSoundEffect();
           if (user.getSum() == 21) {
             /*
             gameStatus = 1;
@@ -625,6 +655,7 @@ class _PlayerDocState extends State<PlayerDoc> {
                 appState.hit();
               },
               //icon: Icon(icon),
+
               style: ElevatedButton.styleFrom(
                   fixedSize: Size(65, 45), padding: EdgeInsets.all(5.0)),
               child: Text('Hit'),
@@ -666,6 +697,7 @@ class _PlayerDocState extends State<PlayerDoc> {
             Card(
               //color: Theme.of(context).colorScheme.inversePrimary,
               elevation: 1.0,
+              color: Color.fromARGB(100, 100, 100, 100),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 //child: Text(String.format("%.2f", appState.stack)),
@@ -674,7 +706,7 @@ class _PlayerDocState extends State<PlayerDoc> {
             ),
             SizedBox(width: 10),
             Card(
-              //color: Theme.of(context).colorScheme.inversePrimary,
+              //color: Color.fromARGB(100, 100, 100, 100),
               elevation: 1.0,
 
               child: Text("Bet: "),
@@ -682,7 +714,8 @@ class _PlayerDocState extends State<PlayerDoc> {
             SizedBox(width: 5),
             Card(
               //color: Theme.of(context).colorScheme.inversePrimary,
-              elevation: 1.0,
+              elevation: 4.0,
+              color: Color.fromARGB(100, 100, 100, 100),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Text(currBet),
@@ -990,6 +1023,7 @@ class DealerDoc extends StatelessWidget {
           Card(
             //color: Theme.of(context).colorScheme.inversePrimary,
             elevation: 1.0,
+            color: Color.fromARGB(100, 100, 100, 100),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text("Dealer"),
@@ -1027,6 +1061,7 @@ class DealerDoc extends StatelessWidget {
           Card(
             //color: Theme.of(context).colorScheme.inversePrimary,
             elevation: 1.0,
+            color: Color.fromARGB(100, 100, 100, 100),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Text("Dealer"),
@@ -1239,8 +1274,6 @@ class Gamestatus extends StatelessWidget {
             ),
           if (appState.splitResult)
             Card(
-
-
               color: Color.fromARGB(255, 9, 21, 23),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
@@ -1254,14 +1287,14 @@ class Gamestatus extends StatelessWidget {
           if (appState.splitResult) SizedBox(width: 5.0),
           if (appState.splitResult)
             Card(
-              
               color: Color.fromARGB(255, 9, 21, 23),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
-                child: Text("Hand 1: ${result2} (${appState.userSplit.getSum()})",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 43, 203, 238),
-                    )),
+                child:
+                    Text("Hand 1: ${result2} (${appState.userSplit.getSum()})",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 43, 203, 238),
+                        )),
               ),
             ),
         ],
@@ -1273,7 +1306,6 @@ class Gamestatus extends StatelessWidget {
   //MyAppState.user.addCard(MyAppState.deck.getCard());
   //}
 }
-
 
 class Card1 {
   final int num;

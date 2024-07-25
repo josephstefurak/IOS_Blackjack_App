@@ -71,7 +71,7 @@
       "name": "flutter",
       "rootUri": "file:///Users/josephstefurak/Downloads/flutter/packages/flutter",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "flutter_lints",
@@ -83,7 +83,7 @@
       "name": "flutter_test",
       "rootUri": "file:///Users/josephstefurak/Downloads/flutter/packages/flutter_test",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.3"
     },
     {
       "name": "flutter_web_plugins",
@@ -105,21 +105,21 @@
     },
     {
       "name": "leak_tracker",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker-10.0.0",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker-10.0.4",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_flutter_testing",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-2.0.1",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker_flutter_testing-3.0.3",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.2"
     },
     {
       "name": "leak_tracker_testing",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker_testing-2.0.1",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker_testing-3.0.1",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.2"
     },
     {
       "name": "lints",
@@ -141,7 +141,7 @@
     },
     {
       "name": "meta",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/meta-1.11.0",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/meta-1.12.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -249,7 +249,7 @@
     },
     {
       "name": "test_api",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/test_api-0.6.1",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/test_api-0.7.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -273,9 +273,9 @@
     },
     {
       "name": "vm_service",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/vm_service-13.0.0",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/vm_service-14.2.1",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.3"
     },
     {
       "name": "xdg_directories",
@@ -290,7 +290,10 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-07-19T02:25:23.845079Z",
+  "generated": "2024-07-23T23:10:18.607315Z",
   "generator": "pub",
-  "generatorVersion": "3.3.4"
+  "generatorVersion": "3.4.4",
+  "flutterRoot": "file:///Users/josephstefurak/Downloads/flutter",
+  "flutterVersion": "3.22.3",
+  "pubCache": "file:///Users/josephstefurak/.pub-cache"
 }
