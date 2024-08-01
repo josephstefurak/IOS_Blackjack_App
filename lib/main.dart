@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:collection/collection.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers_api.dart';
 
 void main() {
   runApp(MyApp());
@@ -70,9 +71,43 @@ class MyAppState extends ChangeNotifier {
   bool splitInProg = false;
   bool splitResult = false;
 
-  /*
-  final audioPlayer = AudioPlayer();
+  bool audioOn = true;
+  String volumeImage = "volume_up_sharp";
+  //Icon vol = Icon(Icon.volume_up_sharp);
 
+
+  
+  final soundPlayer = AudioPlayer();
+  //final soundPlayer = AudioPlayer();
+
+  String getVolIcon(){
+    return volumeImage;
+  }
+
+  void toggleAudio() {
+    if (audioOn){
+      audioOn = false;
+      volumeImage = "volume_mute_sharp";
+    } else {
+      audioOn = true;
+      volumeImage = "volume_up_sharp";
+    }
+    notifyListeners();
+  }
+
+  Future<void> playSound(String name) async{
+    //String audioPath = "assets/sounds/deal.mp3";
+    String out = "/Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/$name.mp3";
+    print("Playing");
+    
+    if (audioOn) {
+      await soundPlayer.play(out, isLocal: true);
+    }
+    //await soundPlayer.play(url);
+    //await player.play(AssetSource(audioPath));
+   
+  }
+  /*
   @override
   void dispose() {
     super.dispose();
@@ -96,24 +131,32 @@ class MyAppState extends ChangeNotifier {
       print("${bet}");
       stack -= bet;
       user.addCard(deck.getCard());
+      //playSound("deal");
+      playSound("deal2");
       notifyListeners();
+      
       await Future.delayed(const Duration(milliseconds: 500));
       dealer.addCard(deck.getCard());
+      playSound("deal2");
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 500));
       user.addCard(deck.getCard());
+      playSound("deal2");
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 500));
-      dealer.addCard(deck.getCard());
 
       if (user.getSum() == 21) {
         gameStatus = 5;
         gameEnded = true;
         justDealt = false;
-      } else if (dealer.getSum() == 21) {
-        gameEnded = true;
-        gameStatus = 6;
-        justDealt = false;
+      } else {
+        dealer.addCard(deck.getCard());
+        playSound("deal2");
+        if (dealer.getSum() == 21) {
+          gameEnded = true;
+          gameStatus = 6;
+          justDealt = false;
+        }
       }
       if (stack >= bet) {
         //stack -= bet;
@@ -142,6 +185,7 @@ class MyAppState extends ChangeNotifier {
       bet = bet * 2.0;
 
       user.addCard(deck.getCard());
+      playSound("deal");
       if (user.getSum() == 21) {
         gameStatus = 1;
         justDealt = false;
@@ -157,7 +201,7 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void split() {
+  Future<void> split() async {
     if (gameStarted && !gameEnded) {
       doubleOption = false;
       splitOption = false;
@@ -170,7 +214,12 @@ class MyAppState extends ChangeNotifier {
 
       Card1 temp = user.pullCard();
       userSplit.addCard(temp);
+      playSound("deal");
+      notifyListeners();
+      await Future.delayed(const Duration(milliseconds: 500));
+
       userSplit.addCard(deck.getCard());
+      playSound("deal");
       /*
       if (userSplit.getSum() == 21) {
         gameStatus2 = 1;
@@ -182,10 +231,14 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void switchHands() {
+  Future<void> switchHands() async {
     splitHand = false;
     gameEnded = false;
+    notifyListeners();
+    await Future.delayed(const Duration(milliseconds: 500));
     user.addCard(deck.getCard());
+    playSound("deal");
+    notifyListeners();
 
     gameStatus = 9;
     //gameStatus2 = 0;
@@ -198,16 +251,18 @@ class MyAppState extends ChangeNotifier {
   }
 
   // Function for hitting (getting another card) - to be implemented later
-  void hit() {
+  Future<void> hit() async {
     // Implement logic for adding a card to the user's hand
     if (gameStatus != 10) {
       if (gameStarted && !gameEnded) {
         doubleOption = false;
         splitOption = false;
         if (splitHand) {
-          
           userSplit.addCard(deck.getCard());
-
+          playSound("deal");
+          notifyListeners();
+          await Future.delayed(const Duration(milliseconds: 1500));
+          //notifyListeners();
           if (userSplit.getSum() == 21) {
             stand();
             /*
@@ -226,6 +281,7 @@ class MyAppState extends ChangeNotifier {
           }
         } else {
           user.addCard(deck.getCard());
+          playSound("deal");
           //playSoundEffect();
           if (user.getSum() == 21) {
             /*
@@ -266,11 +322,13 @@ class MyAppState extends ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 500));
       if (!splitHand && !splitInProg) {
         //normal hand
-        gameEnded = true;
+        //gameEnded = true;
         justDealt = false;
+        notifyListeners();
         while (dealer.getSum() <= 16) {
-          await Future.delayed(const Duration(milliseconds: 500));
+          await Future.delayed(const Duration(milliseconds: 750));
           dealer.addCard(deck.getCard());
+          playSound("deal");
           notifyListeners();
         }
         if (dealer.getSum() == 21) {
@@ -289,7 +347,10 @@ class MyAppState extends ChangeNotifier {
       } else if (!splitHand && splitInProg) {
         //second hand of split (normal hand)
         while (dealer.getSum() <= 16) {
+          await Future.delayed(const Duration(milliseconds: 750));
           dealer.addCard(deck.getCard());
+          playSound("deal");
+          notifyListeners();
         }
         if (dealer.getSum() == 21) {
           gameStatus = 2;
@@ -329,6 +390,7 @@ class MyAppState extends ChangeNotifier {
         switchHands();
       }
     }
+    await Future.delayed(const Duration(milliseconds: 500));
     notifyListeners();
   }
 
@@ -349,14 +411,18 @@ class MyAppState extends ChangeNotifier {
     }
     if (gameStatus == 1 || gameStatus == 4) {
       stack += (bet * 2.0);
+      playSound("win");
     } else if (gameStatus == 5) {
       stack += (bet * 2.5);
+      playSound("win");
     } else if (gameStatus == 7) {
       stack += bet;
     }
     if (gameStatus2 == 1 || gameStatus2 == 4) {
+      playSound("win");
       stack += (bet * 2.0);
     } else if (gameStatus2 == 5) {
+      playSound("win");
       stack += (bet * 2.5);
     } else if (gameStatus2 == 7) {
       stack += bet;
@@ -392,6 +458,17 @@ class MyAppState extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  //final player = AudioPlayer();
+  /*
+  Future<void> playSound(String name) async{
+    String audioPath = 'sounds/${name}.mp3';
+
+    await soundPlayer.play(audioPath);
+    //await player.play(AssetSource(audioPath));
+   
+  }
+  */
 }
 
 // ...
@@ -407,6 +484,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // ...
+    var appState = context.watch<MyAppState>();
 
     Widget page;
     switch (selectedIndex) {
@@ -429,29 +507,65 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Row(
           children: [
             SafeArea(
-              child: NavigationRail(
-                extended: constraints.maxWidth >= 600,
-                destinations: [
-                  NavigationRailDestination(
-                    icon: Icon(Icons.home),
-                    label: Text('Home'),
+              /*
+              child: Column(
+                children: [
+                  NavigationRail(
+                    extended: constraints.maxWidth >= 600,
+                    destinations: [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person),
+                        label: Text('Profile'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.info),
+                        label: Text('Info'),
+                      ),
+                    ],
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
                   ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.person),
-                    label: Text('Profile'),
-                  ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.info),
-                    label: Text('Info'),
+                  IconButton(
+                    onPressed: () {
+                      appState.toggleAudio(); 
+                    }, 
+                    //icon: Icon(Icons.${appState.getVolIcon()}),
+                    icon: Icon(appState.audioOn ? Icons.volume_up : Icons.volume_off),
                   ),
                 ],
-                selectedIndex: selectedIndex,
-                onDestinationSelected: (value) {
-                  setState(() {
-                    selectedIndex = value;
-                  });
-                },
               ),
+              */
+              child: NavigationRail(
+                    extended: constraints.maxWidth >= 600,
+                    destinations: [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.settings),
+                        label: Text('Settings'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.info),
+                        label: Text('Info'),
+                      ),
+                    ],
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
+                  ),
             ),
             Expanded(
               child: Container(
@@ -474,8 +588,15 @@ class GeneratorPage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          SizedBox(height: 75),
           Container(
-            height: 400.0,
+            height: 255.0,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.red,
+                width: 2.0,
+              ),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -516,6 +637,7 @@ class ProfilePage extends StatelessWidget {
       TextStyle(color: Color.fromARGB(255, 89, 228, 158));
 
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       backgroundColor: Colors.black, // Set background color
       body: Center(
@@ -524,6 +646,16 @@ class ProfilePage extends StatelessWidget {
           mainAxisAlignment:
               MainAxisAlignment.center, // Center content vertically
           children: [
+            
+            IconButton(
+              onPressed: () {
+                appState.toggleAudio(); 
+              }, 
+              //icon: Icon(Icons.${appState.getVolIcon()}),
+              icon: Icon(appState.audioOn ? Icons.volume_up : Icons.volume_off),
+            ),
+
+            
             Icon(Icons.person,
                 size: 100.0,
                 color: Color.fromARGB(255, 77, 187, 132)), // Add icon
@@ -584,13 +716,14 @@ Face cards are worth 10, aces can be 1 or 11, and other cards are worth their pi
               
 You can hit (get another card), stand (stop receiving cards), double down (bet double for one more card) to reach 21, or split (if your cards have the same value). Double and split actions are only available after the hand is dealt, and unavailable after any subsequent actions.
               
-This game is played with 6 Decks of cards. The deck is reshuffled after three decks have been played.
+This game is played with 3 Decks of cards. The deck is reshuffled after three decks have been played.
               
       Try your luck!''',
               style: TextStyle(
                   // Style the paragraph text
                   fontSize: 16.0,
-                  color: Color.fromARGB(255, 89, 228, 158)),
+                  color: Color.fromARGB(255, 255, 255, 255),
+              ),
               softWrap: true,
               textAlign: TextAlign.left,
             ),
@@ -614,6 +747,8 @@ class PlayerDoc extends StatefulWidget {
 class _PlayerDocState extends State<PlayerDoc> {
   //final WordPair pair;
   //double _currentSliderValue = 0.0;
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -653,6 +788,7 @@ class _PlayerDocState extends State<PlayerDoc> {
             ElevatedButton(
               onPressed: () {
                 appState.hit();
+                appState.playSound("deal");
               },
               //icon: Icon(icon),
 
@@ -829,28 +965,82 @@ class PlayerHand extends StatelessWidget {
 
     //int temp = appState.dealer.getSum();
     return Container(
-      height: 180.0,
-      width: 180.0,
+      height: 220.0,
+      width: 240.0,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.red,
+          width: 2.0,
+        ),
+      ),
+      /*
       child: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           if (appState.user._cards.isNotEmpty)
             Image.asset(
                 'images/${appState.user._cards.elementAt(0).getId()}${appState.user._cards.elementAt(0).getSuit()}.png',
-                height: 90.0,
-                width: 45.0),
+                height: 110.0,
+                width: 55.0),
           for (var card in appState.user._cards.skip(1))
             Positioned(
               top: -15.0 * (appState.user._cards.indexOf(card) - 5),
-              right: -10.0 * (appState.user._cards.indexOf(card) - 7),
+              right: -13.0 * (appState.user._cards.indexOf(card) - 7),
               // 7), // Adjust offset for desired vertical stacking
               //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
 
               child: Image.asset(
                 'images/${card.getId()}${card.getSuit()}.png',
-                height: 90.0,
-                width: 45.0,
+                height: 110.0,
+                width: 55.0,
+                //alignment: Alignment.bottomCenter,
+              ),
+            ),
+        ],
+      ),
+      */
+      child: Stack(
+        fit: StackFit.loose,
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          if (appState.user._cards.isNotEmpty)
+            Image.asset(
+              'images/${appState.user._cards.elementAt(0).getId()}${appState.user._cards.elementAt(0).getSuit()}.png',
+              height: 110.0,
+              width: 55.0,
+            ),
+          for (var i = 1; i < appState.user._cards.length; i++)
+            Positioned(
+              //AlignmentGeometry: AlignmentDirectional.bottomCenter,
+              top: 90 - (10.0 * i),
+              //top: 15.0 * (appState.user._cards.length-i),
+              //right: 90,
+              right: 90 - (10.0 * (i)),
+              child: Image.asset(
+                'images/${appState.user._cards[i].getId()}${appState.user._cards[i].getSuit()}.png',
+                height: 110.0,
+                width: 55.0,
                 alignment: Alignment.bottomCenter,
+              ),
+            ),
+          if (appState.user.getSum() > 0)
+            Positioned(
+              top: 90 - (10.0 * (appState.user._cards.length)),
+              //right: -9.0 * (appState.dealer._cards.indexOf(card) - 7.5),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Card(
+                color: Color.fromARGB(255, 9, 21, 23),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                  child: Text("(${appState.user.getSum()})",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 43, 203, 238),
+                        fontSize: 15.0,
+                      )),
+                ),
+                //),
               ),
             ),
         ],
@@ -876,8 +1066,62 @@ class PlayerHandSplit extends StatelessWidget {
 
     //int temp = appState.dealer.getSum();
     return Container(
-      height: 180.0,
-      width: 180.0,
+      height: 220.0,
+      width: 240.0,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.red,
+          width: 2.0,
+        ),
+      ),
+      child: Stack(
+        fit: StackFit.loose,
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          if (appState.userSplit._cards.isNotEmpty)
+            Image.asset(
+              'images/${appState.userSplit._cards.elementAt(0).getId()}${appState.userSplit._cards.elementAt(0).getSuit()}.png',
+              height: 110.0,
+              width: 55.0,
+            ),
+          for (var i = 1; i < appState.userSplit._cards.length; i++)
+            Positioned(
+              //AlignmentGeometry: AlignmentDirectional.bottomCenter,
+              top: 90 - (10.0 * i),
+              //top: 15.0 * (appState.user._cards.length-i),
+              //right: 90,
+              right: 90 - (10.0 * (i)),
+              child: Image.asset(
+                'images/${appState.userSplit._cards[i].getId()}${appState.userSplit._cards[i].getSuit()}.png',
+                height: 110.0,
+                width: 55.0,
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
+          if (appState.userSplit.getSum() > 0)
+            Positioned(
+              top: 90 - (10.0 * (appState.userSplit._cards.length)),
+              //right: -9.0 * (appState.dealer._cards.indexOf(card) - 7.5),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Card(
+                color: Color.fromARGB(255, 9, 21, 23),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                  child: Text("(${appState.userSplit.getSum()})",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 43, 203, 238),
+                        fontSize: 15.0,
+                      )),
+                ),
+                //),
+              ),
+            ),
+        ],
+      ),
+
+      /*
       child: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
@@ -902,6 +1146,7 @@ class PlayerHandSplit extends StatelessWidget {
             ),
         ],
       ),
+      */
     );
   }
 }
@@ -968,8 +1213,14 @@ class DealerHandTwo extends StatelessWidget {
 
     //int temp = appState.dealer.getSum();
     return Container(
-      height: 180.0,
-      width: 180.0,
+      height: 200.0,
+      width: 190.0,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.yellow,
+          width: 2.0,
+        ),
+      ),
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
@@ -981,7 +1232,7 @@ class DealerHandTwo extends StatelessWidget {
           for (var card in appState.dealer._cards.skip(1))
             Positioned(
               top: 15.0 * (appState.dealer._cards.indexOf(card) + 1),
-              right: -9.0 * (appState.dealer._cards.indexOf(card) - 7),
+              right: -9.0 * (appState.dealer._cards.indexOf(card) - 7.5),
               // 7), // Adjust offset for desired vertical stacking
               //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
 
@@ -990,6 +1241,26 @@ class DealerHandTwo extends StatelessWidget {
                 height: 90.0,
                 width: 45.0,
                 alignment: Alignment.topCenter,
+              ),
+            ),
+          if (appState.dealer.getSum() > 0)
+            Positioned(
+              top: 80 + (15.0 * (appState.dealer._cards.length - 1)),
+              //right: -9.0 * (appState.dealer._cards.indexOf(card) - 7.5),
+              // 7), // Adjust offset for desired vertical stacking
+              //right: -8.0,  // Adjust for desired horizontal offset (negative for right)
+
+              child: Card(
+                color: Color.fromARGB(255, 9, 21, 23),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4.5, 2.5, 4.5, 2.4),
+                  child: Text("(${appState.dealer.getSum()})",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 43, 203, 238),
+                        fontSize: 15.0,
+                      )),
+                ),
+                //),
               ),
             ),
         ],
@@ -1019,7 +1290,7 @@ class DealerDoc extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           //BigCard(pair: pair),
-          SizedBox(height: 100),
+          //SizedBox(height: 100),
           Card(
             //color: Theme.of(context).colorScheme.inversePrimary,
             elevation: 1.0,
@@ -1049,7 +1320,7 @@ class DealerDoc extends StatelessWidget {
             ),
           ),
           */
-          SizedBox(height: 10),
+          //SizedBox(height: 10),
         ],
       );
     } else {
@@ -1057,7 +1328,7 @@ class DealerDoc extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           //BigCard(pair: pair),
-          SizedBox(height: 100),
+          //SizedBox(height: 100),
           Card(
             //color: Theme.of(context).colorScheme.inversePrimary,
             elevation: 1.0,
@@ -1080,7 +1351,7 @@ class DealerDoc extends StatelessWidget {
               ),
             ),
           */
-          SizedBox(height: 10),
+          //SizedBox(height: 10),
         ],
       );
     }
@@ -1383,7 +1654,7 @@ class Deck {
 
     int value = 0;
     int s = 1;
-    for (int i = 1; i <= 24; i++) {
+    for (int i = 1; i <= 12; i++) {
       for (int j = 1; j <= 13; j++) {
         if (j <= 9) {
           value = j + 1;
@@ -1400,7 +1671,7 @@ class Deck {
   }
 
   Card1 getCard() {
-    if (this.currentNum > 156) {
+    if (this.currentNum > 78) {
       _cards.shuffle();
       this.currentNum = 0;
     }
@@ -1431,3 +1702,24 @@ const List<String> ids = [
   "K",
   "A"
 ];
+
+/*
+
+class PlayAudio extends StatefulWidget {
+  const PlayAudio({super.key});
+
+  @override
+  State<PlayAudio> createState() => _PlayAudioState();
+}
+
+  class _PlayAudioState extends State<PlayAudio> {
+
+    final player = AudioPlayer();
+
+    @override
+    Widget build(BuildContext context) {
+
+    }
+  }
+
+*/

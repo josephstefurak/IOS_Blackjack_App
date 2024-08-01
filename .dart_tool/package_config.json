@@ -159,15 +159,15 @@
     },
     {
       "name": "path_provider",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/path_provider-2.1.3",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/path_provider-2.1.4",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "3.2"
     },
     {
       "name": "path_provider_android",
-      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/path_provider_android-2.2.4",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/path_provider_android-2.2.9",
       "packageUri": "lib/",
-      "languageVersion": "3.2"
+      "languageVersion": "3.4"
     },
     {
       "name": "path_provider_foundation",
@@ -290,7 +290,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-07-23T23:10:18.607315Z",
+  "generated": "2024-08-01T22:26:53.365486Z",
   "generator": "pub",
   "generatorVersion": "3.4.4",
   "flutterRoot": "file:///Users/josephstefurak/Downloads/flutter",
