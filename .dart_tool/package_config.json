@@ -14,6 +14,18 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "auth0_flutter",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter-1.7.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "auth0_flutter_platform_interface",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter_platform_interface-1.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1",
       "packageUri": "lib/",
@@ -102,6 +114,12 @@
       "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/http_parser-4.0.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "js",
+      "rootUri": "file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/js-0.6.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
     },
     {
       "name": "leak_tracker",
@@ -290,7 +308,7 @@
       "languageVersion": "3.1"
     }
   ],
-  "generated": "2024-08-01T22:26:53.365486Z",
+  "generated": "2024-08-02T18:39:19.750880Z",
   "generator": "pub",
   "generatorVersion": "3.4.4",
   "flutterRoot": "file:///Users/josephstefurak/Downloads/flutter",

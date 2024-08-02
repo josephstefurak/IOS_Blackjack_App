@@ -40,6 +40,7 @@ dependencies:
   collection: ^1.1.0
 
   audioplayers: ^0.20.1
+  auth0_flutter: ^1.7.2
 
   
 
@@ -72,7 +73,7 @@ flutter:
 
   assets:
     - images/
-    - sounds/
+    - assets/sounds/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

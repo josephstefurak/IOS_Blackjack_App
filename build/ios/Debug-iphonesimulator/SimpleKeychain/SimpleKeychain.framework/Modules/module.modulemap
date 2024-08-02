@@ -1,0 +1,11 @@
+framework module SimpleKeychain {
+  umbrella header "SimpleKeychain-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module SimpleKeychain.Swift {
+  header "SimpleKeychain-Swift.h"
+  requires objc
+}

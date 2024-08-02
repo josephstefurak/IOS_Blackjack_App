@@ -1,13 +1,14 @@
 // ignore_for_file: unnecessary_this, unnecessary_breaks
 
-import 'package:english_words/english_words.dart';
+//import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:collection/collection.dart';
+//import 'package:collection/collection.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:audioplayers/audioplayers_api.dart';
+//import 'package:audioplayers/audioplayers_api.dart';
+import 'package:auth0_flutter/auth0_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -72,7 +73,7 @@ class MyAppState extends ChangeNotifier {
   bool splitResult = false;
 
   bool audioOn = true;
-  String volumeImage = "volume_up_sharp";
+  //String volumeImage = "volume_up_sharp";
   //Icon vol = Icon(Icon.volume_up_sharp);
 
 
@@ -80,28 +81,41 @@ class MyAppState extends ChangeNotifier {
   final soundPlayer = AudioPlayer();
   //final soundPlayer = AudioPlayer();
 
-  String getVolIcon(){
-    return volumeImage;
-  }
+  //String getVolIcon(){
+   // return volumeImage;
+  //}
 
   void toggleAudio() {
     if (audioOn){
       audioOn = false;
-      volumeImage = "volume_mute_sharp";
+      //volumeImage = "volume_mute_sharp";
     } else {
       audioOn = true;
-      volumeImage = "volume_up_sharp";
+      //volumeImage = "volume_up_sharp";
     }
     notifyListeners();
   }
 
   Future<void> playSound(String name) async{
     //String audioPath = "assets/sounds/deal.mp3";
-    String out = "/Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/$name.mp3";
-    print("Playing");
+    //String out = '/Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/deal.mp3';
+    String out = 'assets/sounds/$name.mp3';
+    String temp = '/Users/josephstefurak/Desktop/IOS_Blackjack_App/assets/sounds/deal.mp3';
+    //String out = "/Users/josephstefurak/Desktop/IOS_Blackjack_App/assets/sounds/deal.mp3";
+    //assets/sounds/deal.mp3
+    ///Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/deal.mp3
+    
     
     if (audioOn) {
-      await soundPlayer.play(out, isLocal: true);
+      
+      //await soundPlayer.play(out, isLocal: true);
+      try {
+       //await soundPlayer.setReleaseMode()
+        await soundPlayer.play(out);
+        print("Playing");
+      } catch(e) {
+        print('Error Playing Sound: $e');
+      }
     }
     //await soundPlayer.play(url);
     //await player.play(AssetSource(audioPath));
@@ -144,33 +158,44 @@ class MyAppState extends ChangeNotifier {
       playSound("deal2");
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 500));
+      dealer.addCard(deck.getCard());
+      playSound("deal2");
 
-      if (user.getSum() == 21) {
+      if ((user.getSum() == 21) && (dealer.getSum() == 21)){
+        gameStatus = 7;
+        gameEnded = true;
+        justDealt = false;
+      } else if (user.getSum() == 21) {
         gameStatus = 5;
         gameEnded = true;
         justDealt = false;
+      } else if (dealer.getSum() == 21) {
+        
+        gameStatus = 6;
+        gameEnded = true;
+          
+        justDealt = false;
+        
       } else {
-        dealer.addCard(deck.getCard());
-        playSound("deal2");
-        if (dealer.getSum() == 21) {
-          gameEnded = true;
-          gameStatus = 6;
-          justDealt = false;
-        }
-      }
-      if (stack >= bet) {
-        //stack -= bet;
-        //bet = (bet*2.0);
+        
+        if (stack >= bet) {
+          //stack -= bet;
+          //bet = (bet*2.0);
 
-        doubleOption = true;
-        if (user._cards.elementAt(0).getValue() ==
-            user._cards.elementAt(1).getValue()) {
-          splitOption = true;
+          doubleOption = true;
+          if (user._cards.elementAt(0).getValue() ==
+              user._cards.elementAt(1).getValue()) {
+            splitOption = true;
+          }
         }
+        gameStarted = true;
+        justDealt = true;
+
       }
+
+      
       //gameEnded = false;
-      gameStarted = true;
-      justDealt = true;
+      
 
       notifyListeners();
     }
@@ -244,9 +269,12 @@ class MyAppState extends ChangeNotifier {
     //gameStatus2 = 0;
 
     if (user.getSum() == 21) {
+      /*
       gameStatus = 1;
       justDealt = false;
       gameEnded = true;
+      */
+      stand();
     }
   }
 
@@ -331,9 +359,8 @@ class MyAppState extends ChangeNotifier {
           playSound("deal");
           notifyListeners();
         }
-        if (dealer.getSum() == 21) {
-          gameStatus = 2;
-        } else if (dealer.getSum() > 21) {
+        
+        if (dealer.getSum() > 21) {
           gameStatus = 4;
         } else if (dealer.getSum() > user.getSum()) {
           gameStatus = 2;
@@ -591,12 +618,14 @@ class GeneratorPage extends StatelessWidget {
           SizedBox(height: 75),
           Container(
             height: 255.0,
+            /*
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.red,
                 width: 2.0,
               ),
             ),
+            */
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -631,7 +660,25 @@ class GeneratorPage extends StatelessWidget {
 // ...
 // ...
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Credentials? _credentials;
+
+  late Auth0 auth0;
+
+  @override
+  void initState() {
+    super.initState();
+    auth0 = Auth0('dev-570cfuzk7ci8akce.us.auth0.com', 'mxaUiHIEwVtG5vepQGAiezfZ4DjSdTQ5');
+  }
+
+  late UserProfile tempUser;
+  
+
   @override
   final TextStyle comingSoonStyle =
       TextStyle(color: Color.fromARGB(255, 89, 228, 158));
@@ -644,8 +691,15 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           // Change to Column for vertical alignment
           mainAxisAlignment:
-              MainAxisAlignment.center, // Center content vertically
+              MainAxisAlignment.start, // Center content vertically
           children: [
+            SizedBox(height: 100,),
+            Icon(Icons.person,
+                size: 50.0,
+                color: Color.fromARGB(255, 77, 187, 132)), // Add icon
+            //Text('Profile', style: comingSoonStyle),
+            SizedBox(height: 50,),
+            Text('Toggle Audio:', style: comingSoonStyle),
             
             IconButton(
               onPressed: () {
@@ -654,34 +708,66 @@ class ProfilePage extends StatelessWidget {
               //icon: Icon(Icons.${appState.getVolIcon()}),
               icon: Icon(appState.audioOn ? Icons.volume_up : Icons.volume_off),
             ),
+            SizedBox(height: 50,),
+            if (_credentials == null) 
+              ElevatedButton(
+                onPressed: () async {
+                  // Use a Universal Link callback URL on iOS 17.4+ / macOS 14.4+
+                  // useHTTPS is ignored on Android
+                  final credentials =
+                      await auth0.webAuthentication().login(useHTTPS: true);
+
+                  setState(() {
+                    _credentials = credentials;
+                  });
+                  tempUser = credentials.user;
+                },
+                child: const Text("Log in")
+              ),
+            if (_credentials != null)
+              Column(
+                children: [
+                  
+                  ProfileView(user: tempUser),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // Use a Universal Link logout URL on iOS 17.4+ / macOS 14.4+
+                      // useHTTPS is ignored on Android
+                      await auth0.webAuthentication().logout(useHTTPS: true);
+                  
+                      setState(() {
+                        _credentials = null;
+                      });
+                    },
+                    child: const Text("Log out")),
+                ],
+              ),
+            
 
             
-            Icon(Icons.person,
-                size: 100.0,
-                color: Color.fromARGB(255, 77, 187, 132)), // Add icon
-            Text('Profile Feature Coming Soon.', style: comingSoonStyle),
+            
           ],
         ),
       ),
     );
   }
+}
 
-  /*
+class ProfileView extends StatelessWidget {
+  const ProfileView({Key? key, required this.user}) : super(key: key);
+
+  final UserProfile user;
+
+  @override
   Widget build(BuildContext context) {
-    //var appState = context.watch<MyAppState>();
-    
-    
-
-    var temp = true;
-
-    if (temp) {
-      return Center(
-        child: Text('Profile Feature Coming Soon.',style:  TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-        
-      );
-    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (user.name != null) Text(user.name!),
+        if (user.email != null) Text(user.email!)
+      ],
+    );
   }
-  */
 }
 
 class InfoPage extends StatelessWidget {
@@ -967,12 +1053,14 @@ class PlayerHand extends StatelessWidget {
     return Container(
       height: 220.0,
       width: 240.0,
+      /*
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.red,
           width: 2.0,
         ),
       ),
+      */
       /*
       child: Stack(
         alignment: AlignmentDirectional.bottomCenter,
@@ -1000,7 +1088,7 @@ class PlayerHand extends StatelessWidget {
       ),
       */
       child: Stack(
-        fit: StackFit.loose,
+        //fit: StackFit.loose,
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           if (appState.user._cards.isNotEmpty)
@@ -1068,14 +1156,16 @@ class PlayerHandSplit extends StatelessWidget {
     return Container(
       height: 220.0,
       width: 240.0,
+      /*
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.red,
           width: 2.0,
         ),
       ),
+      */
       child: Stack(
-        fit: StackFit.loose,
+        //fit: StackFit.loose,
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           if (appState.userSplit._cards.isNotEmpty)
@@ -1215,12 +1305,14 @@ class DealerHandTwo extends StatelessWidget {
     return Container(
       height: 200.0,
       width: 190.0,
+      /*
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.yellow,
           width: 2.0,
         ),
       ),
+      */
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
@@ -1617,9 +1709,18 @@ class Player {
 
   int getSum() {
     if (this.handSum > 21) {
+      int aces = this.hasAce;
+      int tempHandVal = this.handSum;
+      while ((tempHandVal > 21) && (aces > 0)) {
+        tempHandVal -= 10;
+        aces -= 1;
+      }
+      return tempHandVal;
+      /*
       if (this.hasAce > 0) {
         return (this.handSum - (10 * this.hasAce));
       }
+      */
     }
     return this.handSum;
   }

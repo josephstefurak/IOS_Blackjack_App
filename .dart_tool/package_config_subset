@@ -6,6 +6,14 @@ audioplayers
 2.12
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/audioplayers-0.20.1/
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/audioplayers-0.20.1/lib/
+auth0_flutter
+2.17
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter-1.7.2/
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter-1.7.2/lib/
+auth0_flutter_platform_interface
+2.17
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter_platform_interface-1.7.0/
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/auth0_flutter_platform_interface-1.7.0/lib/
 boolean_selector
 2.17
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1/
@@ -54,6 +62,10 @@ http_parser
 2.12
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/http_parser-4.0.2/
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/http_parser-4.0.2/lib/
+js
+2.19
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/js-0.6.7/
+file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/js-0.6.7/lib/
 leak_tracker
 3.2
 file:///Users/josephstefurak/.pub-cache/hosted/pub.dev/leak_tracker-10.0.4/
