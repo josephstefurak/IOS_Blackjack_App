@@ -1,5 +1,5 @@
 PODS:
-  - audioplayers (0.0.1):
+  - audioplayers_darwin (0.0.1):
     - Flutter
   - Auth0 (2.7.2):
     - JWTDecode (~> 3.1)
@@ -18,7 +18,7 @@ PODS:
   - SimpleKeychain (1.1.0)
 
 DEPENDENCIES:
-  - audioplayers (from `.symlinks/plugins/audioplayers/ios`)
+  - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
   - auth0_flutter (from `.symlinks/plugins/auth0_flutter/darwin`)
   - Flutter (from `Flutter`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -30,8 +30,8 @@ SPEC REPOS:
     - SimpleKeychain
 
 EXTERNAL SOURCES:
-  audioplayers:
-    :path: ".symlinks/plugins/audioplayers/ios"
+  audioplayers_darwin:
+    :path: ".symlinks/plugins/audioplayers_darwin/ios"
   auth0_flutter:
     :path: ".symlinks/plugins/auth0_flutter/darwin"
   Flutter:
@@ -40,7 +40,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
 
 SPEC CHECKSUMS:
-  audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
+  audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   Auth0: 28cb24cb19ebd51f0b07751f16d83b59f4019532
   auth0_flutter: f085572268059bc194c7b023d7f432f5ebb72413
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7

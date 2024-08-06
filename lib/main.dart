@@ -1,12 +1,16 @@
 // ignore_for_file: unnecessary_this, unnecessary_breaks
 
 //import 'package:english_words/english_words.dart';
+//import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 //import 'package:collection/collection.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
+
+
 //import 'package:audioplayers/audioplayers_api.dart';
 import 'package:auth0_flutter/auth0_flutter.dart';
 
@@ -99,22 +103,29 @@ class MyAppState extends ChangeNotifier {
   Future<void> playSound(String name) async{
     //String audioPath = "assets/sounds/deal.mp3";
     //String out = '/Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/deal.mp3';
-    String out = 'assets/sounds/$name.mp3';
-    String temp = '/Users/josephstefurak/Desktop/IOS_Blackjack_App/assets/sounds/deal.mp3';
+    String out = "$name.mp3";
+    String temp = '/Users/josephstefurak/Desktop/IOS_Blackjack_App/assets/$name.mp3';
+
     //String out = "/Users/josephstefurak/Desktop/IOS_Blackjack_App/assets/sounds/deal.mp3";
     //assets/sounds/deal.mp3
     ///Users/josephstefurak/Desktop/IOS_Blackjack_App/sounds/deal.mp3
     
-    
+    //await soundPlayer.setSource(AssetSource(out));
+    //await soundPlayer.
+
     if (audioOn) {
       
       //await soundPlayer.play(out, isLocal: true);
+      //assets/deal.mp3
       try {
        //await soundPlayer.setReleaseMode()
-        await soundPlayer.play(out);
+        await soundPlayer.setSource(AssetSource(out));
+        await soundPlayer.play(AssetSource(out));
         print("Playing");
       } catch(e) {
         print('Error Playing Sound: $e');
+      } finally {
+        //await soundPlayer.stop();
       }
     }
     //await soundPlayer.play(url);
@@ -135,6 +146,22 @@ class MyAppState extends ChangeNotifier {
     await audioPlayer.play('sounds/deal.mp3');
   }
   */
+
+  Credentials? _credentials;
+
+  late Auth0 auth0;
+  late UserProfile userProf;
+
+  /*
+  @override
+  void initState() {
+    super.initState();
+    auth0 = Auth0('dev-570cfuzk7ci8akce.us.auth0.com', 'mxaUiHIEwVtG5vepQGAiezfZ4DjSdTQ5');
+  }
+
+  late UserProfile tempUser;
+  */
+
 
   Future<void> deal() async {
     if (!gameStarted) {
@@ -677,6 +704,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   late UserProfile tempUser;
+  //int x = 0;
   
 
   @override
@@ -685,6 +713,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    _credentials = appState._credentials;//
+    
+    if (_credentials != null){
+      tempUser = appState.userProf;
+      //print(appState._credentials?.user.customClaims?.entries.firstOrNull?.value);
+    }
     return Scaffold(
       backgroundColor: Colors.black, // Set background color
       body: Center(
@@ -720,7 +754,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   setState(() {
                     _credentials = credentials;
                   });
+                  appState._credentials = _credentials;//
                   tempUser = credentials.user;
+                  appState.userProf = tempUser;
+                  //appState.stack = 1.00 * (appState._credentials?.user.customClaims?.entries.lastOrNull?.value);  //firstOrNull?.value
+                  //x = tempUser.userMetadata['stack'] as int;
+                  Map stackValue3 = Map.castFrom(appState._credentials?.user.customClaims as dynamic);
+                  double stackValue = 1.00 * stackValue3['https://myexamplesite.com/stack'];
+                  appState.stack = stackValue;
+                  
                 },
                 child: const Text("Log in")
               ),
@@ -734,10 +776,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       // Use a Universal Link logout URL on iOS 17.4+ / macOS 14.4+
                       // useHTTPS is ignored on Android
                       await auth0.webAuthentication().logout(useHTTPS: true);
+                      
                   
                       setState(() {
                         _credentials = null;
                       });
+                      appState._credentials = _credentials;//
                     },
                     child: const Text("Log out")),
                 ],
@@ -760,11 +804,36 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    Map stackValue3 = Map.castFrom(appState._credentials?.user.customClaims as dynamic);
+    double stackValue = 1.00 * stackValue3['https://myexamplesite.com/stack'];
+    //print(stackValue3.keys);
+    //print(stackValue3.values);
+    //double stackValue2 = appState._credentials?.user.customClaims?.entries['https://myexamplesite.com/stack'];
+    //print(stackValue);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (user.name != null) Text(user.name!),
-        if (user.email != null) Text(user.email!)
+        
+        //user.stack 
+        //if (user.stack != )
+        //user.customClaims<'https://dev-570cfuzk7ci8akce.us.auth0.com/stack', stack!>
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Account Stack: "),
+            SizedBox(width: 10),
+            Text("$stackValue"),
+            
+            
+          ]
+          
+          
+        ),
+        SizedBox(height: 10),
+        Text("Save your stack coming soon."),
+        //if (user.email != null) Text(user.email!)
       ],
     );
   }
