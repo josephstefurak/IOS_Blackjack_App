@@ -12,7 +12,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 
 //import 'package:audioplayers/audioplayers_api.dart';
-import 'package:auth0_flutter/auth0_flutter.dart';
+//import 'package:auth0_flutter/auth0_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -146,11 +146,13 @@ class MyAppState extends ChangeNotifier {
     await audioPlayer.play('sounds/deal.mp3');
   }
   */
+  /*
 
   Credentials? _credentials;
 
   late Auth0 auth0;
   late UserProfile userProf;
+  */
 
   /*
   @override
@@ -545,10 +547,12 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = GeneratorPage();
         break;
+      /*
       case 1:
         page = ProfilePage();
         break;
-      case 2:
+      */
+      case 1:
         page = InfoPage();
         break;
       default:
@@ -604,10 +608,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: Icon(Icons.home),
                         label: Text('Home'),
                       ),
+                      /*
                       NavigationRailDestination(
                         icon: Icon(Icons.settings),
                         label: Text('Settings'),
                       ),
+                      */
                       NavigationRailDestination(
                         icon: Icon(Icons.info),
                         label: Text('Info'),
@@ -686,6 +692,7 @@ class GeneratorPage extends StatelessWidget {
 
 // ...
 // ...
+/*
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -838,12 +845,14 @@ class ProfileView extends StatelessWidget {
     );
   }
 }
+*/
 
 class InfoPage extends StatelessWidget {
   @override
 
   //final TextStyle comingSoonStyle = TextStyle(color: Color.fromARGB(255, 89, 228, 158));
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Scaffold(
       appBar: AppBar(
           //title: Text('Info'), // Set app bar title
@@ -852,6 +861,7 @@ class InfoPage extends StatelessWidget {
         padding: EdgeInsets.all(16.0), // Add some padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               'Blackjack Rules',
@@ -862,7 +872,28 @@ class InfoPage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10.0), // Add some space between heading and text
+            SizedBox(height: 10.0),
+            Row(
+              children: [
+                Text('Toggle Audio:', style: TextStyle(
+                    // Style the heading
+                    fontSize: 18.0,
+                    color: Color.fromARGB(255, 89, 228, 158),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    appState.toggleAudio(); 
+                  }, 
+                  //icon: Icon(Icons.${appState.getVolIcon()}),
+                  icon: Icon(appState.audioOn ? Icons.volume_up : Icons.volume_off),
+                ),
+              ],
+            ),
+            
+             // Add some space between heading and text
+            SizedBox(height: 10.0),
             Text(
               '''
 Blackjack is a classic card game where the goal is to beat the dealer by getting a hand closer to 21 without going over. 
@@ -876,7 +907,7 @@ This game is played with 3 Decks of cards. The deck is reshuffled after three de
       Try your luck!''',
               style: TextStyle(
                   // Style the paragraph text
-                  fontSize: 16.0,
+                  fontSize: 14.0,
                   color: Color.fromARGB(255, 255, 255, 255),
               ),
               softWrap: true,
